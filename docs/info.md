@@ -9,11 +9,19 @@ You can also include images in this folder and reference them in the markdown. E
 
 ## How it works
 
-Explain how your project works
+This project has an array of regs that stored each cell of the snake, each is 8 bits allowing a 16x16 grid. Every few frames, the snake cells are shifted along by one, and the new head position is calculated and compared against the current food position, and all the other parts of the body. If the new head overlaps the body, the snake goes grey and stops moving to show game over, and if the new head is at the position of food, the snake length increases by 1. The food location is pseudo-random, using some bits of the counter.
 
 ## How to test
 
-Explain how to use your project
+Try it out at https://vga-playground.com/?repo=https://github.com/GingerGigiCat/Verilog-Snake/
+
+To run tests, do:
+
+```bash
+git clone https://github.com/GingerGigiCat/Verilog-Snake/
+cd Verilog-Snake/test
+make
+```
 
 ## External hardware
 
