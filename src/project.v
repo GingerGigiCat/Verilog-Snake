@@ -88,10 +88,12 @@ module tt_um_vga_snake_gingergigicat(
       end
     
 
-      for (advancer_i = snake_length; advancer_i > 0; advancer_i = advancer_i-1) begin
-        snake[advancer_i] = snake[advancer_i-1];
-        if ((new_head == snake[advancer_i]) && (advancer_i != snake_length || snake_length == 3))
-          game_running = 0;
+      for (advancer_i = 100; advancer_i > 0; advancer_i = advancer_i-1) begin
+        if (advancer_i < snake_length+1) begin
+          snake[advancer_i] = snake[advancer_i-1];
+          if ((new_head == snake[advancer_i]) && (advancer_i != snake_length || snake_length == 3))
+            game_running = 0;
+        end
       end
       snake[0] = new_head;
     end
@@ -106,7 +108,8 @@ module tt_um_vga_snake_gingergigicat(
 
 
     if (video_active) begin
-      for (drawer_i = snake_length; drawer_i > 0; drawer_i = drawer_i-1) begin
+      for (drawer_i = 100; drawer_i > 0; drawer_i = drawer_i-1) begin
+        if (drawer_i < snake_length+1)
         if ((pix_x[8:5] == snake[drawer_i][7:4]) && (pix_y[8:5] == snake[drawer_i][3:0])) begin
           G = 2'b10;
           if (!game_running) begin
