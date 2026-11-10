@@ -54,7 +54,7 @@ module tt_um_vga_snake_gingergigicat(
     .vpos(pix_y)
   );
 
-  reg [5:0] snake [35:0]; // 100 length snake, 4 bits x,  4 bits y, top left corner is (0, 0)
+  reg [5:0] snake [19:0]; // 100 length snake, 4 bits x,  4 bits y, top left corner is (0, 0)
   reg [5:0] food;
   reg [5:0] snake_length = 3;
   reg game_running = 1;
@@ -88,7 +88,7 @@ module tt_um_vga_snake_gingergigicat(
       end
     
 
-      for (advancer_i = 35; advancer_i > 0; advancer_i = advancer_i-1) begin
+      for (advancer_i = 19; advancer_i > 0; advancer_i = advancer_i-1) begin
         if (advancer_i < snake_length+1) begin
           snake[advancer_i] = snake[advancer_i-1];
           if ((new_head == snake[advancer_i]) && (advancer_i != snake_length || snake_length == 3))
@@ -108,7 +108,7 @@ module tt_um_vga_snake_gingergigicat(
 
 
     if (video_active) begin
-      for (drawer_i = 36; drawer_i > 0; drawer_i = drawer_i-1) begin
+      for (drawer_i = 20; drawer_i > 0; drawer_i = drawer_i-1) begin
         if (drawer_i < snake_length+1)
         if ((pix_x[8:6] == snake[drawer_i][5:3]) && (pix_y[8:6] == snake[drawer_i][2:0])) begin
           G = 2'b10;
