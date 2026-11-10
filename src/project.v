@@ -54,9 +54,9 @@ module tt_um_vga_snake_gingergigicat(
     .vpos(pix_y)
   );
 
-  reg [7:0] snake [25:0]; // 100 length snake, 4 bits x,  4 bits y, top left corner is (0, 0)
-  reg [7:0] food;
-  reg [7:0] snake_length = 3;
+  reg [5:0] snake [35:0]; // 100 length snake, 4 bits x,  4 bits y, top left corner is (0, 0)
+  reg [5:0] food;
+  reg [5:0] snake_length = 3;
   reg game_running = 1;
   wire [1:0] snake_direction;
   assign snake_direction = ui_in[1:0];
@@ -77,18 +77,18 @@ module tt_um_vga_snake_gingergigicat(
     var [7:0] new_head;
     if (game_running) begin
       case (snake_direction)
-        UP: new_head = {snake[0][7:4], snake[0][3:0]-4'd1};
-        RIGHT: new_head = {snake[0][7:4]+4'd1, snake[0][3:0]};
-        DOWN: new_head = {snake[0][7:4], snake[0][3:0]+4'd1};
-        LEFT: new_head = {snake[0][7:4]-4'd1, snake[0][3:0]};
+        UP: new_head = {snake[0][5:3], snake[0][2:0]-3'd1};
+        RIGHT: new_head = {snake[0][5:3]+3'd1, snake[0][2:0]};
+        DOWN: new_head = {snake[0][5:3], snake[0][2:0]+3'd1};
+        LEFT: new_head = {snake[0][5:3]-3'd1, snake[0][2:0]};
       endcase
       if (new_head == food) begin
         snake_length = snake_length + 1;
-        food = {counter[7], counter[1], counter[6], counter[4], counter[3], counter[2], counter[0], counter[5]};
+        food = {counter[6], counter[1], counter[4], counter[3], counter[0], counter[5]};
       end
     
 
-      for (advancer_i = 25; advancer_i > 0; advancer_i = advancer_i-1) begin
+      for (advancer_i = 35; advancer_i > 0; advancer_i = advancer_i-1) begin
         if (advancer_i < snake_length+1) begin
           snake[advancer_i] = snake[advancer_i-1];
           if ((new_head == snake[advancer_i]) && (advancer_i != snake_length || snake_length == 3))
@@ -108,9 +108,9 @@ module tt_um_vga_snake_gingergigicat(
 
 
     if (video_active) begin
-      for (drawer_i = 26; drawer_i > 0; drawer_i = drawer_i-1) begin
+      for (drawer_i = 36; drawer_i > 0; drawer_i = drawer_i-1) begin
         if (drawer_i < snake_length+1)
-        if ((pix_x[8:5] == snake[drawer_i][7:4]) && (pix_y[8:5] == snake[drawer_i][3:0])) begin
+        if ((pix_x[8:6] == snake[drawer_i][5:3]) && (pix_y[8:6] == snake[drawer_i][2:0])) begin
           G = 2'b10;
           if (!game_running) begin
             G = 2'b01;
@@ -120,7 +120,7 @@ module tt_um_vga_snake_gingergigicat(
 
         end
       end
-      if ((pix_x[8:5] == food[7:4]) && (pix_y[8:5] == food[3:0])) begin
+      if ((pix_x[8:6] == food[5:3]) && (pix_y[8:6] == food[2:0])) begin
         R = 2'b10;
       end
     end
