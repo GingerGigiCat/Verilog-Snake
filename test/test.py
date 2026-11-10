@@ -28,23 +28,23 @@ async def test_project(dut):
 
     # check vga timings
 
-    await RisingEdge(dut.user_project.hsync) # hsync, give it time to not be in the middle of a signal high or low
-    await FallingEdge(dut.user_project.hsync)
+    await RisingEdge(dut.hsync) # hsync, give it time to not be in the middle of a signal high or low
+    await FallingEdge(dut.hsync)
     clock_count = 0
     while True:
         await RisingEdge(dut.clk)
-        if dut.user_project.hsync.value == 1:
+        if dut.hsync.value == 1:
             break
         clock_count += 1
 
     assert clock_count == 96
 
-    await RisingEdge(dut.user_project.vsync)  # vsync
-    await FallingEdge(dut.user_project.vsync)
+    await RisingEdge(dut.vsync)  # vsync
+    await FallingEdge(dut.vsync)
     clock_count = 0
     while True:
-        await FallingEdge(dut.user_project.hsync)
-        if dut.user_project.vsync.value == 1:
+        await FallingEdge(dut.hsync)
+        if dut.vsync.value == 1:
             break
         clock_count += 1
 
