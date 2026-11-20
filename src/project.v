@@ -80,7 +80,6 @@ module tt_um_vga_snake_gingergigicat(
       food <= 6'b000000;
       snake_length <= 3;
       game_running <= 1;
-      counter <= 10'b0000000000;
     end
     else begin
       integer advancer_i;
