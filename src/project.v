@@ -74,7 +74,7 @@ module tt_um_vga_snake_gingergigicat(
 
   always @(posedge counter[1]) begin
     integer advancer_i;
-    var [7:0] new_head;
+    var [5:0] new_head;
     if (game_running) begin
       case (snake_direction)
         UP: new_head = {snake[0][5:3], snake[0][2:0]-3'd1};
@@ -83,51 +83,61 @@ module tt_um_vga_snake_gingergigicat(
         LEFT: new_head = {snake[0][5:3]-3'd1, snake[0][2:0]};
       endcase
       if (new_head == food) begin
-        snake_length = snake_length + 1;
-        food = {counter[6], counter[1], counter[4], counter[3], counter[0], counter[5]};
+        snake_length <= snake_length + 1;
+        food <= {counter[6], counter[1], counter[4], counter[3], counter[0], counter[5]};
       end
     
 
       for (advancer_i = 19; advancer_i > 0; advancer_i = advancer_i-1) begin
         if (advancer_i < snake_length+1) begin
-          snake[advancer_i] = snake[advancer_i-1];
+          snake[advancer_i] <= snake[advancer_i-1];
           if ((new_head == snake[advancer_i]) && (advancer_i != snake_length || snake_length == 3))
-            game_running = 0;
+            game_running <= 0;
         end
       end
-      snake[0] = new_head;
+      snake[0] <= new_head;
     end
   end
 
   always @(posedge clk) begin
-    integer drawer_i;
 
-    G = 2'b00;
-    R = 2'b00;
-    B = 2'b00;
+    integer drawer_i;
+    integer snake_rst_i;
+    if (!rst_n) begin
+      for (snake_rst_i = 19; snake_rst_i > 0; snake_rst_i = snake_rst_i - 1)
+        snake[snake_rst_i] <= 6'b000000;
+      food <= 6'b000000;
+      snake_length <= 3;
+      game_running <= 1;
+      counter <= 10'b0000000000;
+    end
+
+    G <= 2'b00;
+    R <= 2'b00;
+    B <= 2'b00;
 
 
     if (video_active) begin
       for (drawer_i = 20; drawer_i > 0; drawer_i = drawer_i-1) begin
         if (drawer_i < snake_length+1)
         if ((pix_x[8:6] == snake[drawer_i][5:3]) && (pix_y[8:6] == snake[drawer_i][2:0])) begin
-          G = 2'b10;
+          G <= 2'b10;
           if (!game_running) begin
-            G = 2'b01;
-            R = 2'b01;
-            B = 2'b01;
+            G <= 2'b01;
+            R <= 2'b01;
+            B <= 2'b01;
           end
 
         end
       end
       if ((pix_x[8:6] == food[5:3]) && (pix_y[8:6] == food[2:0])) begin
-        R = 2'b10;
+        R <= 2'b10;
       end
     end
     else begin
-      G = 2'b00;
-      R = 2'b00;
-      B = 2'b00;
+      G <= 2'b00;
+      R <= 2'b00;
+      B <= 2'b00;
     end
   end
 
