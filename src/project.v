@@ -72,38 +72,9 @@ module tt_um_vga_snake_gingergigicat(
   end
 
 
-  always @(posedge counter[1]) begin
-    integer advancer_i;
-    var [5:0] new_head;
-    if (game_running) begin
-      case (snake_direction)
-        UP: new_head = {snake[0][5:3], snake[0][2:0]-3'd1};
-        RIGHT: new_head = {snake[0][5:3]+3'd1, snake[0][2:0]};
-        DOWN: new_head = {snake[0][5:3], snake[0][2:0]+3'd1};
-        LEFT: new_head = {snake[0][5:3]-3'd1, snake[0][2:0]};
-      endcase
-      if (new_head == food) begin
-        snake_length <= snake_length + 1;
-        food <= {counter[6], counter[1], counter[4], counter[3], counter[0], counter[5]};
-      end
-    
-
-      for (advancer_i = 19; advancer_i > 0; advancer_i = advancer_i-1) begin
-        if (advancer_i < snake_length+1) begin
-          snake[advancer_i] <= snake[advancer_i-1];
-          if ((new_head == snake[advancer_i]) && (advancer_i != snake_length || snake_length == 3))
-            game_running <= 0;
-        end
-      end
-      snake[0] <= new_head;
-    end
-  end
-
-  always @(posedge clk) begin
-
-    integer drawer_i;
+  always @(posedge counter[1], negedge rst_n) begin
     integer snake_rst_i;
-    if (!rst_n) begin
+    if (~rst_n) begin
       for (snake_rst_i = 19; snake_rst_i > 0; snake_rst_i = snake_rst_i - 1)
         snake[snake_rst_i] <= 6'b000000;
       food <= 6'b000000;
@@ -111,6 +82,37 @@ module tt_um_vga_snake_gingergigicat(
       game_running <= 1;
       counter <= 10'b0000000000;
     end
+    else begin
+      integer advancer_i;
+      var [5:0] new_head;
+      if (game_running) begin
+        case (snake_direction)
+          UP: new_head = {snake[0][5:3], snake[0][2:0]-3'd1};
+          RIGHT: new_head = {snake[0][5:3]+3'd1, snake[0][2:0]};
+          DOWN: new_head = {snake[0][5:3], snake[0][2:0]+3'd1};
+          LEFT: new_head = {snake[0][5:3]-3'd1, snake[0][2:0]};
+        endcase
+        if (new_head == food) begin
+          snake_length <= snake_length + 1;
+          food <= {counter[6], counter[1], counter[4], counter[3], counter[0], counter[5]};
+        end
+      
+
+        for (advancer_i = 19; advancer_i > 0; advancer_i = advancer_i-1) begin
+          if (advancer_i < snake_length+1) begin
+            snake[advancer_i] <= snake[advancer_i-1];
+            if ((new_head == snake[advancer_i]) && (advancer_i != snake_length || snake_length == 3))
+              game_running <= 0;
+          end
+        end
+        snake[0] <= new_head;
+      end
+    end
+  end
+
+  always @(posedge clk) begin
+
+    integer drawer_i;
 
     G <= 2'b00;
     R <= 2'b00;
