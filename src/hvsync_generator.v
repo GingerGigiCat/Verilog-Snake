@@ -44,7 +44,7 @@ module hvsync_generator(clk, reset, hsync, vsync, display_on, hpos, vpos);
   always @(posedge clk)
   begin
     hsync <= ~(hpos>=H_SYNC_START && hpos<=H_SYNC_END);
-    if(hmaxxed)
+    if(hmaxxed || reset)
       hpos <= 0;
     else
       hpos <= hpos + 1;
@@ -54,8 +54,8 @@ module hvsync_generator(clk, reset, hsync, vsync, display_on, hpos, vpos);
   always @(posedge clk)
   begin
     vsync <= ~(vpos>=V_SYNC_START && vpos<=V_SYNC_END);
-    if(hmaxxed)
-      if (vmaxxed)
+    if(hmaxxed || reset)
+      if (vmaxxed || reset)
         vpos <= 0;
       else
         vpos <= vpos + 1;
