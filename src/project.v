@@ -56,7 +56,7 @@ module tt_um_vga_snake_gingergigicat(
 
   reg [5:0] snake [19:0]; // 100 length snake, 4 bits x,  4 bits y, top left corner is (0, 0)
   reg [5:0] food;
-  reg [5:0] snake_length = 3;
+  reg [5:0] snake_length = 2;
   reg game_running = 1;
   wire [1:0] snake_direction;
   assign snake_direction = ui_in[1:0];
@@ -75,10 +75,10 @@ module tt_um_vga_snake_gingergigicat(
   always @(posedge counter[1], negedge rst_n) begin
     integer snake_rst_i;
     if (~rst_n) begin
-      for (snake_rst_i = 19; snake_rst_i > 0; snake_rst_i = snake_rst_i - 1)
+      for (snake_rst_i = 19; snake_rst_i > -1; snake_rst_i = snake_rst_i - 1)
         snake[snake_rst_i] <= 6'b000000;
       food <= 6'b000000;
-      snake_length <= 3;
+      snake_length <= 2;
       game_running <= 1;
     end
     else begin
@@ -99,9 +99,11 @@ module tt_um_vga_snake_gingergigicat(
 
         for (advancer_i = 19; advancer_i > 0; advancer_i = advancer_i-1) begin
           if (advancer_i < snake_length+1) begin
-            snake[advancer_i] <= snake[advancer_i-1];
             if ((new_head == snake[advancer_i]) && (advancer_i != snake_length || snake_length == 3))
               game_running <= 0;
+            
+            snake[advancer_i] <= snake[advancer_i-1];
+
           end
         end
         snake[0] <= new_head;
@@ -119,9 +121,9 @@ module tt_um_vga_snake_gingergigicat(
 
 
     if (video_active) begin
-      for (drawer_i = 20; drawer_i > 0; drawer_i = drawer_i-1) begin
+      for (drawer_i = 20; drawer_i > -1; drawer_i = drawer_i-1) begin
         if (drawer_i < snake_length+1)
-        if ((pix_x[8:6] == snake[drawer_i][5:3]) && (pix_y[8:6] == snake[drawer_i][2:0])) begin
+        if ((pix_x[9] == 0) && ((pix_y[9] == 0) && (pix_x[8:6] == snake[drawer_i][5:3]) && (pix_y[8:6] == snake[drawer_i][2:0]))) begin
           G <= 2'b10;
           if (!game_running) begin
             G <= 2'b01;
@@ -131,7 +133,7 @@ module tt_um_vga_snake_gingergigicat(
 
         end
       end
-      if ((pix_x[8:6] == food[5:3]) && (pix_y[8:6] == food[2:0])) begin
+      if (((pix_x[9] == 0) && (pix_x[8:6] == food[5:3])) && ((pix_y[9] == 0) && (pix_y[8:6] == food[2:0]))) begin
         R <= 2'b10;
       end
     end
@@ -147,3 +149,4 @@ module tt_um_vga_snake_gingergigicat(
   wire _unused_ok_ = &{pix_y, snake_length};
 
 endmodule
+

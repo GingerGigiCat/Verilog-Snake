@@ -20,14 +20,14 @@ module hvsync_generator(clk, reset, hsync, vsync, display_on, hpos, vpos);
 
   // declarations for TV-simulator sync parameters
   // horizontal constants
-  parameter H_DISPLAY       = 512; // horizontal display width
-  parameter H_BACK          =  0; // horizontal left border (back porch)
-  parameter H_FRONT         =  0; // horizontal right border (front porch)
+  parameter H_DISPLAY       = 640; // horizontal display width
+  parameter H_BACK          =  48; // horizontal left border (back porch)
+  parameter H_FRONT         =  16; // horizontal right border (front porch)
   parameter H_SYNC          =  96; // horizontal sync width
   // vertical constants
-  parameter V_DISPLAY       = 512; // vertical display height
-  parameter V_TOP           =  0; // vertical top border
-  parameter V_BOTTOM        =  0; // vertical bottom border
+  parameter V_DISPLAY       = 480; // vertical display height
+  parameter V_TOP           =  33; // vertical top border
+  parameter V_BOTTOM        =  10; // vertical bottom border
   parameter V_SYNC          =   2; // vertical sync # lines
   // derived constants
   parameter H_SYNC_START    = H_DISPLAY + H_FRONT;
@@ -44,8 +44,8 @@ module hvsync_generator(clk, reset, hsync, vsync, display_on, hpos, vpos);
   always @(posedge clk)
   begin
     hsync <= ~(hpos>=H_SYNC_START && hpos<=H_SYNC_END);
-    if(hmaxxed || reset)
-      hpos <= 0;
+    if(hmaxxed)
+      hpos <= 10'b0000000000;
     else
       hpos <= hpos + 1;
   end
@@ -54,9 +54,9 @@ module hvsync_generator(clk, reset, hsync, vsync, display_on, hpos, vpos);
   always @(posedge clk)
   begin
     vsync <= ~(vpos>=V_SYNC_START && vpos<=V_SYNC_END);
-    if(hmaxxed || reset)
-      if (vmaxxed || reset)
-        vpos <= 0;
+    if(hmaxxed)
+      if (vmaxxed)
+        vpos <= 10'b0000000000;
       else
         vpos <= vpos + 1;
   end
@@ -67,3 +67,4 @@ module hvsync_generator(clk, reset, hsync, vsync, display_on, hpos, vpos);
 endmodule
 
 `endif
+
