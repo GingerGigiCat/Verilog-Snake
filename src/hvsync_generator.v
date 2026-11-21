@@ -46,10 +46,12 @@ module hvsync_generator(clk, reset, hsync, vsync, display_on, hpos, vpos);
     hsync <= ~(hpos>=H_SYNC_START && hpos<=H_SYNC_END);
     if (reset)
       hpos <= 0;
-    if(hmaxxed)
-      hpos <= 10'b0000000000;
-    else
-      hpos <= hpos + 1;
+    else begin
+      if(hmaxxed)
+        hpos <= 10'b0000000000;
+      else
+        hpos <= hpos + 1;
+    end
   end
 
   // vertical position counter
@@ -58,11 +60,13 @@ module hvsync_generator(clk, reset, hsync, vsync, display_on, hpos, vpos);
     vsync <= ~(vpos>=V_SYNC_START && vpos<=V_SYNC_END);
     if (reset)
       vpos <= 0;
-    if(hmaxxed)
-      if (vmaxxed)
-        vpos <= 10'b0000000000;
-      else
-        vpos <= vpos + 1;
+    else begin
+      if(hmaxxed)
+        if (vmaxxed)
+          vpos <= 10'b0000000000;
+        else
+          vpos <= vpos + 1;
+    end
   end
   
   // display_on is set when beam is in "safe" visible frame
