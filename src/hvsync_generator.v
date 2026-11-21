@@ -37,13 +37,15 @@ module hvsync_generator(clk, reset, hsync, vsync, display_on, hpos, vpos);
   parameter V_SYNC_END      = V_DISPLAY + V_BOTTOM + V_SYNC - 1;
   parameter V_MAX           = V_DISPLAY + V_TOP + V_BOTTOM + V_SYNC - 1;
 
-  wire hmaxxed = (hpos == H_MAX) || reset;	// set when hpos is maximum
-  wire vmaxxed = (vpos == V_MAX) || reset;	// set when vpos is maximum
+  wire hmaxxed = (hpos == H_MAX);	// set when hpos is maximum
+  wire vmaxxed = (vpos == V_MAX);	// set when vpos is maximum
   
   // horizontal position counter
   always @(posedge clk)
   begin
     hsync <= ~(hpos>=H_SYNC_START && hpos<=H_SYNC_END);
+    if (reset)
+      hpos <= 0;
     if(hmaxxed)
       hpos <= 10'b0000000000;
     else
@@ -54,6 +56,8 @@ module hvsync_generator(clk, reset, hsync, vsync, display_on, hpos, vpos);
   always @(posedge clk)
   begin
     vsync <= ~(vpos>=V_SYNC_START && vpos<=V_SYNC_END);
+    if (reset)
+      vpos <= 0;
     if(hmaxxed)
       if (vmaxxed)
         vpos <= 10'b0000000000;
@@ -67,4 +71,5 @@ module hvsync_generator(clk, reset, hsync, vsync, display_on, hpos, vpos);
 endmodule
 
 `endif
+
 
